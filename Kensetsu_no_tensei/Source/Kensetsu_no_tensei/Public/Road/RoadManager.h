@@ -27,6 +27,12 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere, Category = "Road Management")
+	int32 GridWidth;
+
+	UPROPERTY(EditAnywhere, Category = "Road Management")
+	int32 GridHeight;
+
 	TArray<TArray<ARoadTile*>> RoadGrid;
 
 	UPROPERTY(EditAnywhere, Category = "Road Management")
@@ -35,8 +41,16 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Road Management")
 	TSubclassOf<ARoadTile> RoadEndClass;
 
+	void DefaultInitialization();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	int32 GetGridWidth() const;
+
+	int32 GetGridHeight() const;
+
+	const TArray<TArray<ARoadTile*>>& GetRoadGrid() const;
 
 };

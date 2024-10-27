@@ -20,12 +20,12 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Components")
 	class USplineComponent* SplineComponent;
 
-	UPROPERTY(EditAnywhere, Category = "Components")
-	class USplineMeshComponent* SplineMeshComponent;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, Category = "Road Management")
+	TSubclassOf<AActor> Marker;
 
 public:	
 	// Called every frame
