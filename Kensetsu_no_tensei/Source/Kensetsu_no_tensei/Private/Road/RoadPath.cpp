@@ -126,6 +126,8 @@ static void MoveToRandomNeighbour(const TArray<TArray<char>>& RoadGrid, int32& C
 	}
 }
 
+
+
 void ARoadPath::InitializeSplinePoints()
 {
 	ARoadManager* RoadManager = FindRoadManager();
@@ -156,24 +158,16 @@ void ARoadPath::InitializeSplinePoints()
 	int32 CurrentX = int(Width / 2) - 1;
 	int32 CurrentY = Height - 1;
 
+	AddPointToSpline(CurrentX, CurrentY + 1, RoadManager->GetActorLocation());
 	while(CurrentX != int(Width / 2) - 1 || CurrentY != 0) {
 		TrimRoadGrid(RoadGrid, CurrentX, CurrentY);
-		FVector SplinePointLocation = FVector(CurrentX * 200, CurrentY * 200, 0) + RoadManager->GetActorLocation();
-		SplineComponent->AddSplinePoint(SplinePointLocation, ESplineCoordinateSpace::World);
-		FActorSpawnParameters SpawnParams;
-		AActor* PointMarker = GetWorld()->SpawnActor<AActor>(Marker, SplinePointLocation, FRotator::ZeroRotator, SpawnParams);
-		PointMarker->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+		AddPointToSpline(CurrentX, CurrentY, RoadManager->GetActorLocation());
 		RoadGrid[CurrentY][CurrentX] = 0;
 		MoveToRandomNeighbour(RoadGrid, CurrentX, CurrentY);
 	}
-	TrimRoadGrid(RoadGrid, CurrentX, CurrentY);
-	FVector SplinePointLocation = FVector(CurrentX * 200, CurrentY * 200, 0) + RoadManager->GetActorLocation();
-	SplineComponent->AddSplinePoint(SplinePointLocation, ESplineCoordinateSpace::World);
-	FActorSpawnParameters SpawnParams;
-	AActor* PointMarker = GetWorld()->SpawnActor<AActor>(Marker, SplinePointLocation, FRotator::ZeroRotator, SpawnParams);
-	PointMarker->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
-	RoadGrid[CurrentY][CurrentX] = 0;
-	MoveToRandomNeighbour(RoadGrid, CurrentX, CurrentY);
+
+	AddPointToSpline(CurrentX, CurrentY, RoadManager->GetActorLocation());
+	AddPointToSpline(CurrentX, CurrentY - 1, RoadManager->GetActorLocation());
 
 
 	SplineComponent->UpdateSpline();
@@ -185,6 +179,15 @@ ARoadManager* ARoadPath::FindRoadManager()
 		return *It;
 	}
 	return nullptr;
+}
+
+void ARoadPath::AddPointToSpline(int32 X, int32 Y, const FVector& Offset)
+{
+	FVector SplinePointLocation = FVector(X * 200, Y * 200, 0) + Offset;
+	SplineComponent->AddSplinePoint(SplinePointLocation, ESplineCoordinateSpace::World);
+	FActorSpawnParameters SpawnParams;
+	AActor* PointMarker = GetWorld()->SpawnActor<AActor>(Marker, SplinePointLocation, FRotator::ZeroRotator, SpawnParams);
+	PointMarker->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 }
 
 
