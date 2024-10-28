@@ -30,6 +30,15 @@ void ARoadPath::BeginPlay()
 
 }
 
+void ARoadPath::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	for (AActor* Actor : Markers) {
+		Actor->Destroy();
+	}
+	Markers.Empty();
+}
+
 // Called every frame
 void ARoadPath::Tick(float DeltaTime)
 {
@@ -187,5 +196,6 @@ void ARoadPath::AddPointToSpline(int32 X, int32 Y, const FVector& Offset)
 	FActorSpawnParameters SpawnParams;
 	AActor* PointMarker = GetWorld()->SpawnActor<AActor>(Marker, SplinePointLocation, FRotator::ZeroRotator, SpawnParams);
 	PointMarker->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+	Markers.Add(PointMarker);
 }
 

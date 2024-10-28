@@ -31,6 +31,15 @@ void AEnemyCharacter::BeginPlay()
 	PathToFollow = GetWorld()->SpawnActor<ARoadPath>(RoadPathClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
 }
 
+void AEnemyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	if (PathToFollow) {
+		PathToFollow->Destroy();
+	}
+}
+
 // Called every frame
 void AEnemyCharacter::Tick(float DeltaTime)
 {
