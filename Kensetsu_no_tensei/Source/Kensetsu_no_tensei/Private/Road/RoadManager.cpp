@@ -72,7 +72,8 @@ void ARoadManager::CreateClickableTower(int32 X, int32 Y)
 
 		FVector SpawnLocation = FVector(X * 200.0f, Y * 200.0f, 0.0f);
 		FActorSpawnParameters SpawnParams;
-		GetWorld()->SpawnActor<AActor>(SelectedTurretClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+		auto turret = GetWorld()->SpawnActor<AActor>(SelectedTurretClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+		turret->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 	}
 }
 
