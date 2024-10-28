@@ -26,6 +26,9 @@ void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	FActorSpawnParameters SpawnParams;
+
+	PathToFollow = GetWorld()->SpawnActor<ARoadPath>(RoadPathClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
 }
 
 // Called every frame
@@ -38,7 +41,7 @@ void AEnemyCharacter::Tick(float DeltaTime)
         accumDistance += Speed * DeltaTime;
         
         FVector NewLocation = PathToFollow->SplineComponent->GetLocationAtDistanceAlongSpline(accumDistance, ESplineCoordinateSpace::World);
-        SetActorLocation(NewLocation);
+        SetActorLocation(NewLocation + FVector(0, 0, 150));
         FRotator SplineRotation = PathToFollow->SplineComponent->GetRotationAtDistanceAlongSpline(accumDistance, ESplineCoordinateSpace::World);
         SetActorRotation(SplineRotation);
     }

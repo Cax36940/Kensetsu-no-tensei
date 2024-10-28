@@ -17,12 +17,14 @@ class KENSETSU_NO_TENSEI_API AEnemyCharacter : public APawn
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* StaticMesh;
 
-	UPROPERTY(EditAnywhere)
-	class ARoadPath* PathToFollow;
+	
 
 public:
 	// Sets default values for this pawn's properties
 	AEnemyCharacter();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ARoadPath* PathToFollow;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Speed;
@@ -32,6 +34,9 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, Category = "Road Management")
+	TSubclassOf<ARoadPath> RoadPathClass;
 
 public:	
 	// Called every frame

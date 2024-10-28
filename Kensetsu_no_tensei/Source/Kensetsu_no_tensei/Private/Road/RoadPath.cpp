@@ -169,7 +169,6 @@ void ARoadPath::InitializeSplinePoints()
 	AddPointToSpline(CurrentX, CurrentY, RoadManager->GetActorLocation());
 	AddPointToSpline(CurrentX, CurrentY - 1, RoadManager->GetActorLocation());
 
-
 	SplineComponent->UpdateSpline();
 }
 
@@ -189,5 +188,4 @@ void ARoadPath::AddPointToSpline(int32 X, int32 Y, const FVector& Offset)
 	AActor* PointMarker = GetWorld()->SpawnActor<AActor>(Marker, SplinePointLocation, FRotator::ZeroRotator, SpawnParams);
 	PointMarker->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 }
-
 

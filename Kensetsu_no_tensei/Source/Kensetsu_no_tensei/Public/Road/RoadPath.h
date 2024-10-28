@@ -36,5 +36,4 @@ public:
 	ARoadManager* FindRoadManager();
 
 	void AddPointToSpline(int32 X, int32 Y, const FVector& Offset);
-
 };
