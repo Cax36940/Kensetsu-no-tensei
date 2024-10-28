@@ -65,7 +65,8 @@ static int32 CountNeighbours(const TArray<TArray<char>>& RoadGrid, int32 X, int3
 
 static void TrimRoadGrid(TArray<TArray<char>>& RoadGrid, int32 CurrentX, int32 CurrentY) {
 	bool loop = true;
-	while (loop) {
+	int while_count = 0;
+	while (loop && ++while_count < 101) {
 		loop = false;
 		for (int Y = 0; Y < RoadGrid.Num(); ++Y) {
 			for (int X = 0; X < RoadGrid[0].Num(); ++X) {
@@ -168,7 +169,8 @@ void ARoadPath::InitializeSplinePoints()
 	int32 CurrentY = Height - 1;
 
 	AddPointToSpline(CurrentX, CurrentY + 1, RoadManager->GetActorLocation());
-	while(CurrentX != int(Width / 2) - 1 || CurrentY != 0) {
+	int while_count = 0;
+	while((CurrentX != int(Width / 2) - 1 || CurrentY != 0) && ++while_count < 50) {
 		TrimRoadGrid(RoadGrid, CurrentX, CurrentY);
 		AddPointToSpline(CurrentX, CurrentY, RoadManager->GetActorLocation());
 		RoadGrid[CurrentY][CurrentX] = 0;
