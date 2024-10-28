@@ -3,6 +3,8 @@
 
 #include "Enemy/EnemyCharacter.h"
 #include "Components/BoxComponent.h"
+#include "Road/RoadPath.h"
+#include "Components/SplineComponent.h"
 
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
@@ -24,6 +26,9 @@ void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	FActorSpawnParameters SpawnParams;
+
+	PathToFollow = GetWorld()->SpawnActor<ARoadPath>(RoadPathClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
 }
 
 // Called every frame
@@ -31,6 +36,15 @@ void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+    if (PathToFollow)
+    {
+        accumDistance += Speed * DeltaTime;
+        
+        FVector NewLocation = PathToFollow->SplineComponent->GetLocationAtDistanceAlongSpline(accumDistance, ESplineCoordinateSpace::World);
+        SetActorLocation(NewLocation + FVector(0, 0, 150));
+        FRotator SplineRotation = PathToFollow->SplineComponent->GetRotationAtDistanceAlongSpline(accumDistance, ESplineCoordinateSpace::World);
+        SetActorRotation(SplineRotation);
+    }
 }
 
 // Called to bind functionality to input
@@ -39,4 +53,3 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
-
