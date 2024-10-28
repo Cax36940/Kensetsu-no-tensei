@@ -35,15 +35,23 @@ void AEnemyCharacter::BeginPlay()
 void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
     if (PathToFollow)
     {
-        accumDistance += Speed * DeltaTime;
+		float SplineLength = PathToFollow->SplineComponent->GetSplineLength();
+		FVector EndLocation = PathToFollow->SplineComponent->GetLocationAtDistanceAlongSpline(SplineLength, ESplineCoordinateSpace::World);
+        
+		accumDistance += Speed * DeltaTime;
         
         FVector NewLocation = PathToFollow->SplineComponent->GetLocationAtDistanceAlongSpline(accumDistance, ESplineCoordinateSpace::World);
         SetActorLocation(NewLocation + FVector(0, 0, 150));
         FRotator SplineRotation = PathToFollow->SplineComponent->GetRotationAtDistanceAlongSpline(accumDistance, ESplineCoordinateSpace::World);
         SetActorRotation(SplineRotation);
+
+		if (FVector::Dist(NewLocation, EndLocation) <= 10.0f)
+		{
+			Destroy();
+		}
     }
 }
 
