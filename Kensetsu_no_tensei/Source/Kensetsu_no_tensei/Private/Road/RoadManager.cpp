@@ -59,6 +59,22 @@ void ARoadManager::CreateRoadTile(int32 X, int32 Y)
 		RoadGrid[Y][X]->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 	}
 }
+void ARoadManager::CreateClickableTower(int32 X, int32 Y)
+{
+	if (X >= GridWidth || Y >= GridHeight) {
+		return;
+	}
+
+	if (RoadGrid[Y][X] == nullptr && 0 < ClickableTurretClasses.Num() ) {
+
+		int32 RandomIndex = FMath::RandRange(0, ClickableTurretClasses.Num() - 1);
+		TSubclassOf<AActor> SelectedTurretClass = ClickableTurretClasses[RandomIndex];
+
+		FVector SpawnLocation = FVector(X * 200.0f, Y * 200.0f, 0.0f);
+		FActorSpawnParameters SpawnParams;
+		GetWorld()->SpawnActor<AActor>(SelectedTurretClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+	}
+}
 
 void ARoadManager::DestroyRoadTile(int32 X, int32 Y)
 {
@@ -105,6 +121,9 @@ void ARoadManager::DefaultInitialization()
 		for (int X = 0; X < GRID_WIDTH; ++X) {
 			if (DefaultGrid[Y][X]) {
 				CreateRoadTile(X, Y);
+			}
+			else {
+				CreateClickableTower(X, Y);
 			}
 		}
 	}

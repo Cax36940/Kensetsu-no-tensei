@@ -19,6 +19,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Road Management")
 	void CreateRoadTile(int32 X, int32 Y);
+	
+	UFUNCTION(BlueprintCallable, Category = "Road Management")
+	void CreateClickableTower(int32 X, int32 Y);
 
 	UFUNCTION(BlueprintCallable, Category = "Road Management")
 	void DestroyRoadTile(int32 X, int32 Y);
@@ -40,6 +43,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Road Management")
 	TSubclassOf<ARoadTile> RoadEndClass;
+
+	UPROPERTY(EditAnywhere, Category = "Turrets")
+	TArray<TSubclassOf<AActor>> ClickableTurretClasses;
+
 
 	void DefaultInitialization();
 
