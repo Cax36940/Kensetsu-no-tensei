@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "../Road/RoadPath.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "EnemyCharacter.generated.h"
@@ -19,12 +18,17 @@ class KENSETSU_NO_TENSEI_API AEnemyCharacter : public APawn
 	class UStaticMeshComponent* StaticMesh;
 
 	UPROPERTY(EditAnywhere)
-	class ARoadPath* RoadPath;
+	class ARoadPath* PathToFollow;
 
 public:
 	// Sets default values for this pawn's properties
 	AEnemyCharacter();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Speed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float accumDistance = 0;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
