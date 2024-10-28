@@ -75,6 +75,8 @@ void ARoadManager::DestroyRoadTile(int32 X, int32 Y)
 // Called when the game starts or when spawned
 void ARoadManager::BeginPlay()
 {
+	GridWidth = 10;
+	GridHeight = 10;
 	Super::BeginPlay();
 	
 	RoadGrid.SetNum(GridHeight);
