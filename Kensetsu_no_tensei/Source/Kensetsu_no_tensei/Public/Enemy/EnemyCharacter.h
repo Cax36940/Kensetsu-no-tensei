@@ -17,8 +17,6 @@ class KENSETSU_NO_TENSEI_API AEnemyCharacter : public APawn
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* StaticMesh;
 
-	
-
 public:
 	// Sets default values for this pawn's properties
 	AEnemyCharacter();
