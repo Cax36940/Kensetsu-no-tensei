@@ -11,20 +11,35 @@ ARoadTile::ARoadTile()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Create BoxComponent and set as RootComponent for the Actor
-	BoxCollision = CreateDefaultSubobject<UBoxComponent>("BoxCollision");
+	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 	RootComponent = BoxCollision;
 
 	// Create StaticMeshComponent and Attach to BoxComponent
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	StaticMesh->SetupAttachment(BoxCollision);
 
+	DynamicMaterialInstance = CreateDefaultSubobject<UMaterialInstanceDynamic>(TEXT("DynamicMaterial"));
 
+}
+
+void ARoadTile::SetColor(const FLinearColor& NewColor)
+{
+	if (DynamicMaterialInstance) {
+		DynamicMaterialInstance->SetVectorParameterValue("Color", NewColor);
+	}
 }
 
 // Called when the game starts or when spawned
 void ARoadTile::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (StaticMesh) {
+		DynamicMaterialInstance = UMaterialInstanceDynamic::Create(StaticMesh->GetMaterial(0), this, TEXT("DynamicMaterial"));
+		if (DynamicMaterialInstance) {
+			StaticMesh->SetMaterial(0, DynamicMaterialInstance);
+		}
+	}
 	
 }
 
