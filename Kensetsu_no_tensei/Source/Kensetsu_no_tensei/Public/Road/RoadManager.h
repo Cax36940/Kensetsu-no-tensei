@@ -50,6 +50,8 @@ protected:
 
 	void DefaultInitialization();
 
+	void UpdateRoadTiles();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

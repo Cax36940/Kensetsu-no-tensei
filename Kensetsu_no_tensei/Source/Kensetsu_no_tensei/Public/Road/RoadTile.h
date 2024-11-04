@@ -21,6 +21,13 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UStaticMeshComponent* StaticMesh;
 
+	UPROPERTY(EditAnywhere)
+	class UMaterialInstanceDynamic* DynamicMaterialInstance;
+
+	bool Accessible = true;
+
+	void SetColor(const FLinearColor& NewColor);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

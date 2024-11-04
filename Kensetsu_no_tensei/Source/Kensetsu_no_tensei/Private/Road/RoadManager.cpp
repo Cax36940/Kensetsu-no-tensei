@@ -3,6 +3,8 @@
 
 #include "Road/RoadManager.h"
 #include "Road/RoadTile.h"
+#include "Road/RoadPath.h"
+#include "Components/SplineComponent.h"
 #include "Engine/World.h"
 
 #define GRID_WIDTH 10
@@ -102,7 +104,7 @@ void ARoadManager::BeginPlay()
 	}
 
 	DefaultInitialization(); // Just here for tests, to remove later
-
+	UpdateRoadTiles();
 	{ // Spawn both end points
 		FActorSpawnParameters SpawnParams;
 
@@ -128,6 +130,16 @@ void ARoadManager::DefaultInitialization()
 			}
 		}
 	}
+}
+
+void ARoadManager::UpdateRoadTiles()
+{
+	FLinearColor RedColor(1.0f, 0.0f, 0.0f, 1.0f);
+	RoadGrid[9][4]->SetColor(RedColor);
+	/*for (int i = 0; i < 10; ++i) {
+		ARoadPath Road;
+		Road.InitializeSplinePoints();
+	}*/
 }
 
 int32 ARoadManager::GetGridWidth() const
