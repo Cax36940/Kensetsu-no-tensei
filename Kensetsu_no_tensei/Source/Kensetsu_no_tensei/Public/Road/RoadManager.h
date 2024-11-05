@@ -6,7 +6,19 @@
 #include "GameFramework/Actor.h"
 #include "RoadManager.generated.h"
 
+
 class ARoadTile;
+
+USTRUCT()
+struct FAStarNode {
+	GENERATED_BODY()
+	FAStarNode() : HValue(0), Dist(0), X(0), Y(0) {}
+	FAStarNode(int32 HValue, int32 Dist, int32 X, int32 Y) : HValue(HValue), Dist(Dist), X(X), Y(Y) {}
+	int32 HValue;
+	int32 Dist;
+	int32 X;
+	int32 Y;
+};
 
 UCLASS()
 class KENSETSU_NO_TENSEI_API ARoadManager : public AActor
@@ -52,6 +64,7 @@ protected:
 
 	void UpdateRoadTiles();
 
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -62,4 +75,5 @@ public:
 
 	const TArray<TArray<ARoadTile*>>& GetRoadGrid() const;
 
+	void CreatePath(TArray<TPair<int32, int32>>& PathVec);
 };

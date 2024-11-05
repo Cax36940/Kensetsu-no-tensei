@@ -8,16 +8,7 @@
 
 class ARoadManager;
 
-USTRUCT()
-struct FAStarNode {
-	GENERATED_BODY()
-	FAStarNode() : HValue(0), Dist(0), X(0), Y(0) {}
-	FAStarNode(int32 HValue, int32 Dist, int32 X, int32 Y) : HValue(HValue), Dist(Dist), X(X), Y(Y) {}
-	int32 HValue;
-	int32 Dist;
-	int32 X;
-	int32 Y;
-};
+
 
 UCLASS()
 class KENSETSU_NO_TENSEI_API ARoadPath : public AActor
