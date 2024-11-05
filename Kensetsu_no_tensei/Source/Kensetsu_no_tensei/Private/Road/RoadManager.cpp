@@ -6,6 +6,7 @@
 #include "Road/RoadPath.h"
 #include "Components/SplineComponent.h"
 #include "Engine/World.h"
+#include "HAL/PlatformTime.h"
 
 #define GRID_WIDTH 10
 #define GRID_HEIGHT 10
@@ -44,8 +45,8 @@ ARoadManager::ARoadManager()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	GridWidth = 10;
-	GridHeight = 10;
+	GridWidth = GRID_WIDTH;
+	GridHeight = GRID_HEIGHT;
 }
 
 void ARoadManager::CreateRoadTile(int32 X, int32 Y)
@@ -94,8 +95,8 @@ void ARoadManager::DestroyRoadTile(int32 X, int32 Y)
 // Called when the game starts or when spawned
 void ARoadManager::BeginPlay()
 {
-	GridWidth = 10;
-	GridHeight = 10;
+	GridWidth = GRID_HEIGHT;
+	GridHeight = GRID_HEIGHT;
 	Super::BeginPlay();
 	
 	RoadGrid.SetNum(GridHeight);
@@ -132,14 +133,112 @@ void ARoadManager::DefaultInitialization()
 	}
 }
 
+static int32 Heuristic(int32 X, int32 Y, int32 endX, int32 endY) {
+	return abs(X - endX) + abs(Y - endY);
+}
+
+// Insert in log(N) while preserving decreasing order
+static void InsertInOrder(TArray<FAStarNode>& Queue, const FAStarNode& Element) {
+	int Left = 0;
+	int Right = Queue.Num();
+
+	while (Left < Right) {
+		int Middle = (Right + Left) / 2;
+		if (Queue[Middle].HValue > Element.HValue) {
+			Left = Middle + 1;
+		}
+		else {
+			Right = Middle;
+		}
+	}
+
+	Queue.Insert(Element, Left);
+}
+
+// Return true if end is reachable from (X, Y) while not using Visited tiles
+static bool CanReachEnd(int32 X, int32 Y, int32 endX, int32 endY, const TArray<TArray<ARoadTile*>>& Grid, TArray<TArray<char>> Visited) {
+	const int32 Width = Grid[0].Num();
+	const int32 Height = Grid.Num();
+
+	TArray<FAStarNode> PriorityQueue;
+	PriorityQueue.Emplace(Heuristic(X, Y, endX, endY), 0, X, Y);
+
+	const char Direction[4][2] =
+	{ 1,  0,
+	 -1,  0,
+	  0,  1,
+	  0, -1 };
+
+	while (!PriorityQueue.IsEmpty()) {
+		FAStarNode CurrentNode = PriorityQueue.Pop();
+		if (CurrentNode.X == endX && CurrentNode.Y == endY) {
+			return true;
+		}
+
+		Visited[CurrentNode.Y][CurrentNode.X] = 1;
+		for (int i = 0; i < 4; ++i) {
+			const int32 NewX = CurrentNode.X + Direction[i][0];
+			const int32 NewY = CurrentNode.Y + Direction[i][1];
+
+			if (0 <= NewX && NewX < Width && 0 <= NewY && NewY < Height &&
+				Grid[NewY][NewX] != nullptr && Visited[NewY][NewX] == 0) {
+				InsertInOrder(PriorityQueue, FAStarNode(CurrentNode.Dist + 1 + Heuristic(NewX, NewY, endX, endY), CurrentNode.Dist + 1, NewX, NewY));
+			}
+		}
+	}
+
+	return false;
+}
+
 void ARoadManager::UpdateRoadTiles()
 {
-	FLinearColor RedColor(1.0f, 0.0f, 0.0f, 1.0f);
-	RoadGrid[9][4]->SetColor(RedColor);
-	/*for (int i = 0; i < 10; ++i) {
-		ARoadPath Road;
-		Road.InitializeSplinePoints();
-	}*/
+	FLinearColor RedColor(0.5f, 0.5f, 0.5f, 1.0f);
+	FLinearColor GreenColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+	TArray<TArray<char>> Visited;
+
+	Visited.SetNum(GridHeight);
+	for (auto& Row : Visited) {
+		Row.SetNum(GridWidth);
+	}
+
+	for (int Y = 0; Y < GRID_HEIGHT; ++Y) {
+		for (int X = 0; X < GRID_WIDTH; ++X) {
+			if (RoadGrid[Y][X]) {
+				RoadGrid[Y][X]->SetColor(RedColor);
+				Visited[Y][X] = 0;
+			}
+		}
+	}
+
+	const int32 BeginX = GridWidth / 2 - 1;
+	const int32 BeginY = GridHeight - 1;
+
+	const int32 EndX = GridWidth / 2 - 1;
+	const int32 EndY = 0;
+
+	if (!CanReachEnd(BeginX, BeginY, EndX, EndY, RoadGrid, Visited)) {
+		return;
+	}
+
+	TArray<TPair<int32, int32>> CoordList;
+	int32 count = 0;
+	double BeginTime = FPlatformTime::Seconds();
+	while (count < 100) {
+		CreatePath(CoordList);
+		for (const auto& coord : CoordList) {
+			if (0 <= coord.Key && coord.Key < GRID_WIDTH && 0 <= coord.Value && coord.Value < GRID_HEIGHT && Visited[coord.Value][coord.Key] == 0) {
+				RoadGrid[coord.Value][coord.Key]->SetColor(GreenColor);
+				Visited[coord.Value][coord.Key] = 1;
+				count = 0;
+			}
+		}
+		count++;
+	}
+	double EndTime = FPlatformTime::Seconds();
+	GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Green, FString::Printf(TEXT("%lf"), EndTime - BeginTime));
+
+
 }
 
 int32 ARoadManager::GetGridWidth() const
@@ -164,6 +263,69 @@ void ARoadManager::Tick(float DeltaTime)
 
 }
 
+
+
+void ARoadManager::CreatePath(TArray<TPair<int32, int32>>& PathVec) {
+
+	PathVec.Empty();
+
+	TArray<TArray<char>> Visited;
+
+	Visited.SetNum(GridHeight);
+	for (auto& Row : Visited) {
+		Row.SetNum(GridWidth);
+	}
+
+	for (int Y = 0; Y < GridHeight; Y++) {
+		for (int X = 0; X < GridWidth; X++) {
+			Visited[Y][X] = 0;
+		}
+	}
+
+	int32 CurrentX = GridWidth / 2 - 1;
+	int32 CurrentY = GridHeight - 1;
+
+	const int32 EndX = GridWidth / 2 - 1;
+	const int32 EndY = 0;
+
+	const char Direction[4][2] =
+	{ 1,  0,
+	 -1,  0,
+	  0,  1,
+	  0, -1 };
+
+
+	PathVec.Emplace(CurrentX, CurrentY + 1);
+
+	while (true) {
+		PathVec.Emplace(CurrentX, CurrentY);
+		if (CurrentX == EndX && CurrentY == EndY) {
+			break;
+		}
+		Visited[CurrentY][CurrentX] = 1;
+
+		char DirIndex[4] = { 0, 1, 2, 3 };
+		// Shuffle Direction
+		for (int i = 3; i > 0; --i) {
+			std::swap(DirIndex[i], DirIndex[std::rand() % (i + 1)]);
+		}
+
+		for (int i = 0; i < 4; ++i) {
+			const int32 NewX = CurrentX + Direction[DirIndex[i]][0];
+			const int32 NewY = CurrentY + Direction[DirIndex[i]][1];
+
+			if (0 <= NewX && NewX < GridWidth && 0 <= NewY && NewY < GridHeight &&
+				RoadGrid[NewY][NewX] != nullptr && Visited[NewY][NewX] == 0 && CanReachEnd(NewX, NewY, EndX, EndY, RoadGrid, Visited)) {
+				CurrentX = NewX;
+				CurrentY = NewY;
+				break;
+			}
+		}
+	}
+
+	PathVec.Emplace(CurrentX, CurrentY - 1);
+
+}
 
 
 
