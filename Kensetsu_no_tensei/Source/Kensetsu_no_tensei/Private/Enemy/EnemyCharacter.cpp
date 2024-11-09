@@ -4,6 +4,8 @@
 #include "Components/BoxComponent.h"
 #include "Road/RoadPath.h"
 #include "Components/SplineComponent.h"
+#include "Chateau/Chateau.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
@@ -43,6 +45,8 @@ void AEnemyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	
 	
     if (PathToFollow)
     {
@@ -59,6 +63,8 @@ void AEnemyCharacter::Tick(float DeltaTime)
 		if (FVector::Dist(NewLocation, EndLocation) <= 10.0f)
 		{
 			Destroy();
+			AChateau* Chateau = Cast<AChateau>(UGameplayStatics::GetActorOfClass(GetWorld(), AChateau::StaticClass()));
+			Chateau ->ModifyLife(-1);
 		}
     }
 }
