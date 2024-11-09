@@ -22,7 +22,7 @@ static char DefaultGrid[GRID_HEIGHT][GRID_WIDTH] =
 	0, 0, 1, 0, 1, 1, 1, 1, 1, 1,
 	0, 0, 1, 0, 1, 0, 0, 0, 0, 1,
 	0, 0, 1, 1, 1, 1, 1, 0, 1, 1,
-	0, 0, 0, 0, 1, 0, 0, 0, 0, 0
+	1, 0, 0, 0, 1, 0, 0, 0, 0, 0
 
 
 
@@ -106,6 +106,7 @@ void ARoadManager::BeginPlay()
 
 	DefaultInitialization(); // Just here for tests, to remove later
 	UpdateRoadTiles();
+	UpdateRoadMesh();
 	{ // Spawn both end points
 		FActorSpawnParameters SpawnParams;
 
@@ -223,7 +224,7 @@ void ARoadManager::UpdateRoadTiles()
 
 	TArray<TPair<int32, int32>> CoordList;
 	int32 count = 0;
-	double BeginTime = FPlatformTime::Seconds();
+
 	while (count < 100) {
 		CreatePath(CoordList);
 		for (const auto& coord : CoordList) {
@@ -235,10 +236,45 @@ void ARoadManager::UpdateRoadTiles()
 		}
 		count++;
 	}
-	double EndTime = FPlatformTime::Seconds();
-	GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Green, FString::Printf(TEXT("%lf"), EndTime - BeginTime));
 
+}
 
+void ARoadManager::UpdateRoadMesh()
+{
+	const char Direction[4][2] =
+		{ 1,  0,
+		  0,  1,
+		 -1,  0,
+		  0, -1 };
+
+	for (int Y = 0; Y < GRID_HEIGHT; ++Y) {
+		for (int X = 0; X < GRID_WIDTH; ++X) {
+			if (RoadGrid[Y][X]) {
+
+				int32 bitCount = 0;
+
+				for (int i = 0; i < 4; ++i) {
+					const int32 NewX = X + Direction[i][0];
+					const int32 NewY = Y + Direction[i][1];
+
+					bitCount <<= 1;
+					if (0 <= NewX && NewX < GridWidth && 0 <= NewY && NewY < GridHeight &&
+						RoadGrid[NewY][NewX] != nullptr) {
+						bitCount |= 0b1;
+					}
+				}
+
+				if (X == GridWidth / 2 - 1 && Y == GridHeight - 1) {
+					bitCount |= 0b0100;
+				}
+				else if(X == GridWidth / 2 - 1 && Y == 0) {
+					bitCount |= 0b0001;
+				}
+
+				RoadGrid[Y][X]->SetMesh(bitCount);
+			}
+		}
+	}
 }
 
 int32 ARoadManager::GetGridWidth() const

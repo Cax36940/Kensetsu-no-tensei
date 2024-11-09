@@ -28,6 +28,26 @@ public:
 
 	void SetColor(const FLinearColor& NewColor);
 
+	UPROPERTY(EditAnywhere, Category = "Road Mesh");
+	TObjectPtr<class UStaticMesh> RoadMesh0;
+
+	UPROPERTY(EditAnywhere, Category = "Road Mesh");
+	TObjectPtr<class UStaticMesh> RoadMesh1;
+
+	UPROPERTY(EditAnywhere, Category = "Road Mesh")
+	TObjectPtr<class UStaticMesh> RoadMesh2Line;
+
+	UPROPERTY(EditAnywhere, Category = "Road Mesh")
+	TObjectPtr<class UStaticMesh> RoadMesh2Curv;
+
+	UPROPERTY(EditAnywhere, Category = "Road Mesh")
+	TObjectPtr<class UStaticMesh> RoadMesh3;
+
+	UPROPERTY(EditAnywhere, Category = "Road Mesh")
+	TObjectPtr<class UStaticMesh> RoadMesh4;
+
+	void SetMesh(int32 BitCount);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

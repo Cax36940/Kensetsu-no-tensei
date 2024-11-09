@@ -64,6 +64,8 @@ protected:
 
 	void UpdateRoadTiles();
 
+	void UpdateRoadMesh();
+
 
 public:	
 	// Called every frame
