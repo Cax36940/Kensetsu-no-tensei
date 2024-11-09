@@ -14,17 +14,29 @@ class KENSETSU_NO_TENSEI_API AChateau : public AActor
 	UPROPERTY(EditAnywhere)
 	class UBoxComponent* BoxCollision;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* StaticMesh;
+
+
+
 
 	
 public:	
 	// Sets default values for this actor's properties
 	AChateau();
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+	int32 GetLife();
+	
+
+	void ModifyLife(int32);
+
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Stats")
+	int32 Life;
 
 public:	
 	// Called every frame

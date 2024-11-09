@@ -18,6 +18,8 @@ AChateau::AChateau()
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	StaticMesh->SetupAttachment(BoxCollision);
 
+	Life = 5;
+
 }
 
 // Called when the game starts or when spawned
@@ -32,5 +34,13 @@ void AChateau::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AChateau::ModifyLife(int32 Delta) {
+	Life += Delta;
+}
+
+int32  AChateau::GetLife() {
+	return Life;
 }
 
