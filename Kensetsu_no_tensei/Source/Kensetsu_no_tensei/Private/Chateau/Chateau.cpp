@@ -18,7 +18,7 @@ AChateau::AChateau()
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	StaticMesh->SetupAttachment(BoxCollision);
 
-	Life = 5;
+	maxLife = 100;
 
 }
 
@@ -36,11 +36,10 @@ void AChateau::Tick(float DeltaTime)
 
 }
 
-void AChateau::ModifyLife(int32 Delta) {
+void AChateau::ModifyLife(float Delta) {
 	Life += Delta;
 }
 
-int32  AChateau::GetLife() {
+float AChateau::GetLife() {
 	return Life;
 }
-

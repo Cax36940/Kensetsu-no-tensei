@@ -29,6 +29,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float accumDistance = 0;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -36,6 +37,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Road Management")
 	TSubclassOf<ARoadPath> RoadPathClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AmountDamage;
 
 public:	
 	// Called every frame

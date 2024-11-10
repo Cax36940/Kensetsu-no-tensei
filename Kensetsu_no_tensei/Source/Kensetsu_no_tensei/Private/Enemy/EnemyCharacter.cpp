@@ -64,7 +64,7 @@ void AEnemyCharacter::Tick(float DeltaTime)
 		{
 			Destroy();
 			AChateau* Chateau = Cast<AChateau>(UGameplayStatics::GetActorOfClass(GetWorld(), AChateau::StaticClass()));
-			Chateau ->ModifyLife(-1);
+			Chateau ->ModifyLife(-AmountDamage);
 		}
     }
 }

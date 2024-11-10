@@ -25,18 +25,21 @@ public:
 	// Sets default values for this actor's properties
 	AChateau();
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-	int32 GetLife();
+	float GetLife();
 	
 
-	void ModifyLife(int32);
+	void ModifyLife(float);
 
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category = "Stats")
-	int32 Life;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float Life;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float maxLife;
 
 public:	
 	// Called every frame
