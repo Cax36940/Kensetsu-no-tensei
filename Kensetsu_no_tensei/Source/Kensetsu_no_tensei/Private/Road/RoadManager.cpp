@@ -100,6 +100,14 @@ void ARoadManager::DestroyRoadTile(int32 X, int32 Y)
 	}
 }
 
+bool ARoadManager::IsRoadBeginToEnd()
+{
+	TArray<TPair<int32, int32>> CoordList;
+	CreatePath(CoordList);
+
+	return CoordList.Num() != 0;
+}
+
 // Called when the game starts or when spawned
 void ARoadManager::BeginPlay()
 {
@@ -375,6 +383,12 @@ void ARoadManager::CreatePath(TArray<TPair<int32, int32>>& PathVec) {
 		if (CurrentX == EndX && CurrentY == EndY) {
 			break;
 		}
+
+		if (Visited[CurrentY][CurrentX] == 1) {
+			PathVec.Empty();
+			return;
+		}
+
 		Visited[CurrentY][CurrentX] = 1;
 
 		char DirIndex[4] = { 0, 1, 2, 3 };

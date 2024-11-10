@@ -38,6 +38,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Road Management")
 	void DestroyRoadTile(int32 X, int32 Y);
 
+	UFUNCTION(BlueprintCallable, Category = "Road Management")
+	bool IsRoadBeginToEnd();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
