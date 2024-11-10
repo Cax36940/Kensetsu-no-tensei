@@ -62,9 +62,11 @@ protected:
 
 	void DefaultInitialization();
 
-	void UpdateRoadTiles();
+	void UpdateRoadColor();
 
-	void UpdateRoadMesh();
+	void UpdateRoadMesh(int32 X, int32 Y);
+	void UpdateRoadMeshAll();
+	void UpdateRoadMeshAround(int32 X, int32 Y);
 
 
 public:	

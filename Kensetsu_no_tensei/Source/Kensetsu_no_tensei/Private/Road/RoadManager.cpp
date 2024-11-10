@@ -8,21 +8,26 @@
 #include "Engine/World.h"
 #include "HAL/PlatformTime.h"
 
-#define GRID_WIDTH 10
-#define GRID_HEIGHT 10
+#define GRID_WIDTH 15
+#define GRID_HEIGHT 15
 
 static char DefaultGrid[GRID_HEIGHT][GRID_WIDTH] =
 {
-	0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 1, 1, 1, 1, 0, 0,
-	0, 0, 1, 1, 1, 0, 0, 1, 0, 0,
-	0, 0, 1, 0, 1, 0, 0, 1, 0, 0,
-	0, 0, 1, 0, 1, 1, 1, 1, 0, 0,
-	1, 1, 1, 1, 1, 0, 1, 0, 0, 0,
-	0, 0, 1, 0, 1, 1, 1, 1, 1, 1,
-	0, 0, 1, 0, 1, 0, 0, 0, 0, 1,
-	0, 0, 1, 1, 1, 1, 1, 0, 1, 1,
-	1, 0, 0, 0, 1, 0, 0, 0, 0, 0
+	0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0
 
 
 
@@ -51,7 +56,8 @@ ARoadManager::ARoadManager()
 
 void ARoadManager::CreateRoadTile(int32 X, int32 Y)
 {
-	if (X >= GridWidth || Y >= GridHeight) {
+
+	if (X >= GridWidth || X < 0 || Y >= GridHeight || Y < 0) {
 		return;
 	}
 
@@ -60,11 +66,13 @@ void ARoadManager::CreateRoadTile(int32 X, int32 Y)
 		FActorSpawnParameters SpawnParams;
 		RoadGrid[Y][X] = GetWorld()->SpawnActor<ARoadTile>(RoadTileClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
 		RoadGrid[Y][X]->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+		UpdateRoadMeshAround(X, Y);
+		UpdateRoadColor();
 	}
 }
 void ARoadManager::CreateClickableTower(int32 X, int32 Y)
 {
-	if (X >= GridWidth || Y >= GridHeight) {
+	if (X >= GridWidth || X < 0 || Y >= GridHeight || Y < 0) {
 		return;
 	}
 
@@ -82,7 +90,7 @@ void ARoadManager::CreateClickableTower(int32 X, int32 Y)
 
 void ARoadManager::DestroyRoadTile(int32 X, int32 Y)
 {
-	if (X >= GridWidth || Y >= GridHeight) {
+	if (X >= GridWidth || X < 0 || Y >= GridHeight || Y < 0) {
 		return;
 	}
 
@@ -105,9 +113,9 @@ void ARoadManager::BeginPlay()
 	}
 
 	DefaultInitialization(); // Just here for tests, to remove later
-	UpdateRoadTiles();
-	UpdateRoadMesh();
-	{ // Spawn both end points
+	UpdateRoadColor();
+	UpdateRoadMeshAll();
+	/* { // Spawn both end points
 		FActorSpawnParameters SpawnParams;
 
 		FVector SpawnLocation = FVector(4 * 200.0f, -1 * 200.0f, 0.0f);
@@ -117,7 +125,7 @@ void ARoadManager::BeginPlay()
 		SpawnLocation = FVector(4 * 200.0f, GridHeight * 200.0f, 0.0f);
 		TmpActor = GetWorld()->SpawnActor<ARoadTile>(RoadEndClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
 		TmpActor->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
-	}
+	}*/
 }
 
 void ARoadManager::DefaultInitialization()
@@ -128,7 +136,7 @@ void ARoadManager::DefaultInitialization()
 				CreateRoadTile(X, Y);
 			}
 			else {
-				CreateClickableTower(X, Y);
+				//CreateClickableTower(X, Y);
 			}
 		}
 	}
@@ -191,9 +199,9 @@ static bool CanReachEnd(int32 X, int32 Y, int32 endX, int32 endY, const TArray<T
 	return false;
 }
 
-void ARoadManager::UpdateRoadTiles()
+void ARoadManager::UpdateRoadColor()
 {
-	FLinearColor RedColor(0.5f, 0.5f, 0.5f, 1.0f);
+	FLinearColor RedColor(0.4f, 0.4f, 0.4f, 0.8f);
 	FLinearColor GreenColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	TArray<TArray<char>> Visited;
@@ -212,10 +220,10 @@ void ARoadManager::UpdateRoadTiles()
 		}
 	}
 
-	const int32 BeginX = GridWidth / 2 - 1;
+	const int32 BeginX = GridWidth / 2;
 	const int32 BeginY = GridHeight - 1;
 
-	const int32 EndX = GridWidth / 2 - 1;
+	const int32 EndX = GridWidth / 2;
 	const int32 EndY = 0;
 
 	if (!CanReachEnd(BeginX, BeginY, EndX, EndY, RoadGrid, Visited)) {
@@ -239,42 +247,71 @@ void ARoadManager::UpdateRoadTiles()
 
 }
 
-void ARoadManager::UpdateRoadMesh()
+void ARoadManager::UpdateRoadMeshAll()
 {
-	const char Direction[4][2] =
-		{ 1,  0,
-		  0,  1,
-		 -1,  0,
-		  0, -1 };
-
 	for (int Y = 0; Y < GRID_HEIGHT; ++Y) {
 		for (int X = 0; X < GRID_WIDTH; ++X) {
-			if (RoadGrid[Y][X]) {
-
-				int32 bitCount = 0;
-
-				for (int i = 0; i < 4; ++i) {
-					const int32 NewX = X + Direction[i][0];
-					const int32 NewY = Y + Direction[i][1];
-
-					bitCount <<= 1;
-					if (0 <= NewX && NewX < GridWidth && 0 <= NewY && NewY < GridHeight &&
-						RoadGrid[NewY][NewX] != nullptr) {
-						bitCount |= 0b1;
-					}
-				}
-
-				if (X == GridWidth / 2 - 1 && Y == GridHeight - 1) {
-					bitCount |= 0b0100;
-				}
-				else if(X == GridWidth / 2 - 1 && Y == 0) {
-					bitCount |= 0b0001;
-				}
-
-				RoadGrid[Y][X]->SetMesh(bitCount);
-			}
+			UpdateRoadMesh(X, Y);
 		}
 	}
+}
+
+void ARoadManager::UpdateRoadMeshAround(int32 X, int32 Y)
+{
+
+	UpdateRoadMesh(X, Y);
+
+	const char Direction[4][2] =
+	{ 1,  0,
+	  0,  1,
+	 -1,  0,
+	  0, -1 };
+
+	for (int i = 0; i < 4; ++i) {
+		const int32 NewX = X + Direction[i][0];
+		const int32 NewY = Y + Direction[i][1];
+
+		if (0 <= NewX && NewX < GridWidth && 0 <= NewY && NewY < GridHeight &&
+			RoadGrid[NewY][NewX] != nullptr) {
+			UpdateRoadMesh(NewX, NewY);
+		}
+	}
+
+}
+
+void ARoadManager::UpdateRoadMesh(int32 X, int32 Y)
+{
+	const char Direction[4][2] =
+	{ 1,  0,
+	  0,  1,
+	 -1,  0,
+	  0, -1 };
+
+	if (RoadGrid[Y][X]) {
+
+		int32 bitCount = 0;
+
+		for (int i = 0; i < 4; ++i) {
+			const int32 NewX = X + Direction[i][0];
+			const int32 NewY = Y + Direction[i][1];
+
+			bitCount <<= 1;
+			if (0 <= NewX && NewX < GridWidth && 0 <= NewY && NewY < GridHeight &&
+				RoadGrid[NewY][NewX] != nullptr) {
+				bitCount |= 0b1;
+			}
+		}
+
+		if (X == GridWidth / 2 && Y == GridHeight - 1) {
+			bitCount |= 0b0100;
+		}
+		else if (X == GridWidth / 2 && Y == 0) {
+					bitCount |= 0b0001;
+		}
+
+		RoadGrid[Y][X]->SetMesh(bitCount);
+	}
+
 }
 
 int32 ARoadManager::GetGridWidth() const
@@ -318,10 +355,10 @@ void ARoadManager::CreatePath(TArray<TPair<int32, int32>>& PathVec) {
 		}
 	}
 
-	int32 CurrentX = GridWidth / 2 - 1;
+	int32 CurrentX = GridWidth / 2;
 	int32 CurrentY = GridHeight - 1;
 
-	const int32 EndX = GridWidth / 2 - 1;
+	const int32 EndX = GridWidth / 2;
 	const int32 EndY = 0;
 
 	const char Direction[4][2] =
