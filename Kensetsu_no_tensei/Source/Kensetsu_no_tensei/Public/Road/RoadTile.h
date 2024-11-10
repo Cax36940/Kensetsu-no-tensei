@@ -26,6 +26,7 @@ public:
 
 	bool Accessible = true;
 
+	UFUNCTION(BlueprintCallable, Category = "Road Management")
 	void SetColor(const FLinearColor& NewColor);
 
 	UPROPERTY(EditAnywhere, Category = "Road Mesh");
