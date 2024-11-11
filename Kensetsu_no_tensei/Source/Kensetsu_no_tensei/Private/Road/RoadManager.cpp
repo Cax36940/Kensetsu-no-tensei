@@ -70,24 +70,6 @@ void ARoadManager::CreateRoadTile(int32 X, int32 Y)
 		UpdateRoadColor();
 	}
 }
-void ARoadManager::CreateClickableTower(int32 X, int32 Y)
-{
-	if (X >= GridWidth || X < 0 || Y >= GridHeight || Y < 0) {
-		return;
-	}
-
-	if (RoadGrid[Y][X] == nullptr && 0 < ClickableTurretClasses.Num() ) {
-
-		int32 RandomIndex = FMath::RandRange(0, ClickableTurretClasses.Num() - 1);
-		TSubclassOf<AActor> SelectedTurretClass = ClickableTurretClasses[RandomIndex];
-
-		FVector SpawnLocation = FVector(X * 200.0f, Y * 200.0f, 0.0f);
-		FActorSpawnParameters SpawnParams;
-		auto turret = GetWorld()->SpawnActor<AActor>(SelectedTurretClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
-		turret->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
-	}
-}
-
 void ARoadManager::DestroyRoadTile(int32 X, int32 Y)
 {
 	if (X >= GridWidth || X < 0 || Y >= GridHeight || Y < 0) {
@@ -227,8 +209,10 @@ void ARoadManager::UpdateRoadColor()
 	const int32 EndY = 0;
 
 	if (!CanReachEnd(BeginX, BeginY, EndX, EndY, RoadGrid, Visited)) {
+		canReachEnd = false;
 		return;
 	}
+	canReachEnd = true;
 
 	TArray<TPair<int32, int32>> CoordList;
 	int32 count = 0;
