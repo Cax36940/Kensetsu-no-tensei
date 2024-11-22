@@ -48,25 +48,57 @@ void AEnemyCharacter::Tick(float DeltaTime)
 
 	
 	
-    if (PathToFollow)
-    {
+	if (PathToFollow)
+	{
 		float SplineLength = PathToFollow->SplineComponent->GetSplineLength();
 		FVector EndLocation = PathToFollow->SplineComponent->GetLocationAtDistanceAlongSpline(SplineLength, ESplineCoordinateSpace::World);
-        
-		accumDistance += Speed * DeltaTime;
-        
-        FVector NewLocation = PathToFollow->SplineComponent->GetLocationAtDistanceAlongSpline(accumDistance, ESplineCoordinateSpace::World);
-        SetActorLocation(NewLocation + FVector(0, 0, 150));
-        FRotator SplineRotation = PathToFollow->SplineComponent->GetRotationAtDistanceAlongSpline(accumDistance, ESplineCoordinateSpace::World);
-        SetActorRotation(SplineRotation);
 
+		//Update accumulated distance
+		accumDistance += Speed * DeltaTime;
+
+		//Get new location and rotation along spline
+		FVector NewLocation = PathToFollow->SplineComponent->GetLocationAtDistanceAlongSpline(accumDistance, ESplineCoordinateSpace::World);
+		SetActorLocation(NewLocation + FVector(0, 0, 150));
+		FRotator SplineRotation = PathToFollow->SplineComponent->GetRotationAtDistanceAlongSpline(accumDistance, ESplineCoordinateSpace::World);
+		SetActorRotation(SplineRotation);
+
+		//Slow down fast enemies in corners
+		if (isFastEnemy)
+		{
+			//Get current and next frame tangent
+			FVector NextTangent = PathToFollow->SplineComponent->GetTangentAtDistanceAlongSpline(accumDistance + Speed * DeltaTime, ESplineCoordinateSpace::World);
+			FVector CurrentTangent = PathToFollow->SplineComponent->GetTangentAtDistanceAlongSpline(accumDistance, ESplineCoordinateSpace::World);
+			
+			float angle = FMath::Acos(FVector::DotProduct(CurrentTangent.GetSafeNormal(), NextTangent.GetSafeNormal()));
+			angle = FMath::RadiansToDegrees(angle);
+			float slowingFactor = 1.0f - FMath::Clamp(angle / 90.0f, 0.0f, 0.25f); //remove maximum 1/4 of current speed each frame
+			if (angle <= 1.0f)
+			{
+				//Progressively reset speed in straight lines
+				if (Speed >= 200.0f)
+				{
+					Speed = 200.0f;
+				}
+				else
+				{
+					Speed += Speed * slowingFactor;
+				}
+			}
+			else
+			{
+				//Slow down enemy
+				Speed *= slowingFactor;
+			}
+		}
+
+		//Destroy and update castle's life if at end of the road
 		if (FVector::Dist(NewLocation, EndLocation) <= 10.0f)
 		{
 			Destroy();
 			AChateau* Chateau = Cast<AChateau>(UGameplayStatics::GetActorOfClass(GetWorld(), AChateau::StaticClass()));
-			Chateau ->ModifyLife(-AmountDamage);
+			Chateau->ModifyLife(-AmountDamage);
 		}
-    }
+	}
 }
 
 // Called to bind functionality to input

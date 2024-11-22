@@ -41,6 +41,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float AmountDamage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool isFastEnemy = false;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
