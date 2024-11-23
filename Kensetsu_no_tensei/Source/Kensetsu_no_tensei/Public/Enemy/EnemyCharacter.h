@@ -35,6 +35,8 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+	void PlaySound(USoundBase* sound);
+
 	UPROPERTY(EditAnywhere, Category = "Road Management")
 	TSubclassOf<ARoadPath> RoadPathClass;
 
@@ -43,6 +45,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool isFastEnemy = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* AttackSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+	USoundBase* PlayerHitSound;
 
 public:	
 	// Called every frame

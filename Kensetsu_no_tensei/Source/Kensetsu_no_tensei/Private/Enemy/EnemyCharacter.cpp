@@ -41,6 +41,14 @@ void AEnemyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 }
 
+void AEnemyCharacter::PlaySound(USoundBase* sound)
+{
+	if (sound)
+	{
+		UGameplayStatics::PlaySound2D(this, sound);
+	}
+}
+
 // Called every frame
 void AEnemyCharacter::Tick(float DeltaTime)
 {
@@ -94,9 +102,11 @@ void AEnemyCharacter::Tick(float DeltaTime)
 		//Destroy and update castle's life if at end of the road
 		if (FVector::Dist(NewLocation, EndLocation) <= 10.0f)
 		{
-			Destroy();
+			PlaySound(AttackSound);
+			PlaySound(PlayerHitSound);
 			AChateau* Chateau = Cast<AChateau>(UGameplayStatics::GetActorOfClass(GetWorld(), AChateau::StaticClass()));
 			Chateau->ModifyLife(-AmountDamage);
+			Destroy();
 		}
 	}
 }
