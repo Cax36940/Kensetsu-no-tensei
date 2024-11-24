@@ -95,8 +95,8 @@ void ARoadManager::BeginPlay()
 	}
 
 	//DefaultInitialization(); // Just here for tests, to remove later
-	UpdateRoadColor();
-	UpdateRoadMeshAll();
+	//UpdateRoadColor();
+	//UpdateRoadMeshAll();
 	/* { // Spawn both end points
 		FActorSpawnParameters SpawnParams;
 
