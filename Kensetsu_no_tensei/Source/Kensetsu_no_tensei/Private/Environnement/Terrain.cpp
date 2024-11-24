@@ -41,12 +41,19 @@ void ATerrain::CreateTerrain(int32 X, int32 Y)
 		return;
 	}
 
+	FRotator QuarterTurn[4] = {
+		FRotator::ZeroRotator,
+		FRotator(0, 90, 0),
+		FRotator(0, 180, 0),
+		FRotator(0, 270, 0)
+	};
+
 	if (TerrainGrid[Y][X] == nullptr) {
 		FVector SpawnLocation = FVector(X * 200.0f, Y * 200.0f, 0.0f);
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		AActor* NewTerrain = GetWorld()->SpawnActor<AActor>(TerrainClass[DefaultGrid[X][Y]], SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+		AActor* NewTerrain = GetWorld()->SpawnActor<AActor>(TerrainClass[DefaultGrid[X][Y]], SpawnLocation, QuarterTurn[FMath::RandRange(0, 3)], SpawnParams);
 		if (NewTerrain) {
 			NewTerrain->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 			TerrainGrid[Y][X] = NewTerrain;
@@ -92,7 +99,8 @@ void ATerrain::BeginPlay()
 	{
 		for (int32 X = 0; X < GridWidth; ++X)
 		{
-			DefaultGrid[Y][X] = FMath::RandRange(0, TerrainClass.Num() - 1);
+			//DefaultGrid[Y][X] = FMath::RandRange(0, TerrainClass.Num() - 1);
+			DefaultGrid[Y][X] = 0;
 		}
 	}
 
