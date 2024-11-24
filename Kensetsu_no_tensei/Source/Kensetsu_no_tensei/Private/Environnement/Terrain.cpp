@@ -55,7 +55,7 @@ void ATerrain::CreateTerrain(int32 X, int32 Y)
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		AActor* NewTerrain = GetWorld()->SpawnActor<AActor>(TerrainClass[DefaultGrid[X][Y]], SpawnLocation, QuarterTurn[FMath::RandRange(0, 3)], SpawnParams);
 		if (NewTerrain) {
-			NewTerrain->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+			NewTerrain->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 			TerrainGrid[Y][X] = NewTerrain;
 		}
 	}
