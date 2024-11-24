@@ -79,6 +79,8 @@ void ARoadManager::DestroyRoadTile(int32 X, int32 Y)
 	if (RoadGrid[Y][X]) {
 		RoadGrid[Y][X]->Destroy();
 		RoadGrid[Y][X] = nullptr;
+		UpdateRoadMeshAround(X, Y);
+		UpdateRoadColor();
 	}
 }
 
