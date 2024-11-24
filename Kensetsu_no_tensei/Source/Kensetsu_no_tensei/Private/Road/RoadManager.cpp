@@ -94,7 +94,7 @@ void ARoadManager::BeginPlay()
 		Row.SetNum(GridWidth);
 	}
 
-	DefaultInitialization(); // Just here for tests, to remove later
+	//DefaultInitialization(); // Just here for tests, to remove later
 	UpdateRoadColor();
 	UpdateRoadMeshAll();
 	/* { // Spawn both end points
