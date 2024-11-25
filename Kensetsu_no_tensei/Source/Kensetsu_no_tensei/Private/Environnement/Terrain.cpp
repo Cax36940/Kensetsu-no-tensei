@@ -94,15 +94,53 @@ void ATerrain::BeginPlay()
 		Row.SetNum(GridWidth);
 	}
 
-	//initialise default grid with random values between 0 and TerrainClass.Num()
-	for (int32 Y = 0; Y < GridHeight; ++Y)
-	{
-		for (int32 X = 0; X < GridWidth; ++X)
-		{
-			//DefaultGrid[Y][X] = FMath::RandRange(0, TerrainClass.Num() - 1);
+	//check if there are at least 5 terrain classes
+	if (TerrainClass.Num() < 5) {
+		UE_LOG(LogTemp, Error, TEXT("Not enough terrain classes."));
+		return;
+	}
+	//initialise defaut grid with 0
+	for (int32 Y = 0; Y < GridHeight; ++Y) {
+		for (int32 X = 0; X < GridWidth; ++X) {
 			DefaultGrid[Y][X] = 0;
 		}
 	}
+
+
+
+	////initialise default grid with random values between 0 and TerrainClass.Num()
+	//for (int32 Y = 0; Y < GridHeight; ++Y)
+	//{
+	//	// on the three central lines, we want to have the terrain 1
+	//
+	//	if (Y == 7 || Y == 8 || Y == 6)
+	//	{
+	//		for (int32 X = 0; X < GridWidth; ++X)
+	//		{
+	//			DefaultGrid[Y][X] = 1;
+	//		}
+	//	}
+	//	else
+	//	{
+	//		for (int32 X = 0; X < GridWidth; ++X)
+	//		{
+	//			//DefaultGrid[Y][X] = FMath::RandRange(0, TerrainClass.Num() - 1);
+	//			DefaultGrid[Y][X] = 0;
+	//		}
+	//	}
+	//}
+	//
+	//// on the four corner, we want to have the terrain 2
+	//DefaultGrid[0][0] = 2;
+	//DefaultGrid[0][14] = 2;
+	//DefaultGrid[14][0] = 2;
+	//DefaultGrid[14][14] = 2;
+	//
+	//// on the 4 central points we want terrain 3
+	//DefaultGrid[6][6] = 3;
+	//DefaultGrid[6][8] = 3;
+	//DefaultGrid[8][6] = 3;
+	DefaultGrid[8][8] = 3;
 
 	// Create terrain
 	DefaultInitialization();
