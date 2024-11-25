@@ -30,6 +30,7 @@ void AEnemyCharacter::BeginPlay()
 	FActorSpawnParameters SpawnParams;
 
 	PathToFollow = GetWorld()->SpawnActor<ARoadPath>(RoadPathClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+	PercentagePath = 0.0f;
 }
 
 void AEnemyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -69,6 +70,8 @@ void AEnemyCharacter::Tick(float DeltaTime)
 		SetActorLocation(NewLocation + FVector(0, 0, 150));
 		FRotator SplineRotation = PathToFollow->SplineComponent->GetRotationAtDistanceAlongSpline(accumDistance, ESplineCoordinateSpace::World);
 		SetActorRotation(SplineRotation);
+
+		PercentagePath = accumDistance / SplineLength;
 
 		//Slow down fast enemies in corners
 		if (isFastEnemy)

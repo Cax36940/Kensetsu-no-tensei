@@ -28,6 +28,9 @@ public:
 	float Speed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float PercentagePath;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float accumDistance = 0;
 
 protected:
