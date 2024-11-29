@@ -82,7 +82,7 @@ void AEnemyCharacter::Tick(float DeltaTime)
 			
 			float angle = FMath::Acos(FVector::DotProduct(CurrentTangent.GetSafeNormal(), NextTangent.GetSafeNormal()));
 			angle = FMath::RadiansToDegrees(angle);
-			float slowingFactor = 1.0f - FMath::Clamp(angle / 90.0f, 0.0f, 0.25f); //remove maximum 1/4 of current speed each frame
+			float slowingFactor = 1.0f - FMath::Clamp(angle / 90.0f, 0.0f, 0.15f); 
 			if (angle <= 1.0f)
 			{
 				//Progressively reset speed in straight lines
