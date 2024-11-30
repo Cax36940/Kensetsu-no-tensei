@@ -106,51 +106,10 @@ void ATerrain::BeginPlay()
 		}
 	}
 
-
-
-	//initialise default grid with random values between 0 and TerrainClass.Num()
-	for (int32 Y = 0; Y < GridHeight; ++Y)
-	{
-		// on the three central lines, we want to have the terrain 1
-	
-		if (Y == 7 || Y == 8 || Y == 6)
-		{
-			for (int32 X = 0; X < GridWidth; ++X)
-			{
-				DefaultGrid[Y][X] = 2;
-			}
-		}
-		else
-		{
-			for (int32 X = 0; X < GridWidth; ++X)
-			{
-				//DefaultGrid[Y][X] = FMath::RandRange(0, TerrainClass.Num() - 1);
-				DefaultGrid[Y][X] = 0;
-			}
-		}
-	}
-	
-	// on the four corner, we want to have the terrain 2
-	DefaultGrid[0][0] = 1;
-	DefaultGrid[0][14] = 1;
-	DefaultGrid[14][0] = 1;
-	DefaultGrid[14][14] = 1;
-
-	// random place are terrain 4 //lava
-	DefaultGrid[1][2] = 3;
-	DefaultGrid[4][9] = 3;
-	DefaultGrid[7][5] = 3;
-	DefaultGrid[10][3] = 3;
-	
-	// on the 4 central points we want terrain 3
-	DefaultGrid[6][6] = 4;
-	DefaultGrid[6][8] = 4;
-	DefaultGrid[8][6] = 4;
-	DefaultGrid[8][8] = 4;
+	InitGridLevel(LevelNumber);
 
 	// Create terrain
 	DefaultInitialization();
-
 
 }
 
@@ -163,4 +122,62 @@ void ATerrain::DefaultInitialization()
 	}
 }
 
+void ATerrain::InitGridLevel(int32 Number)
+{
+	switch (Number) {
+		case 1:
+			InitLevel1();
+			break;
+		case 2:
+			InitLevel2();
+			break;
+	}
+
+}
+
+/* Terrain values : Default value 0
+	0 - Green
+	1 - Red
+	2 - Violet
+	3 - Lava
+	4 - Blue
+*/
+
+void ATerrain::InitLevel1()
+{
+	//initialise default grid with random values between 0 and TerrainClass.Num()
+	for (int32 Y = 0; Y < GridHeight; ++Y)
+	{
+		// on the three central lines, we want to have the terrain 1
+		if (Y == 7 || Y == 8 || Y == 6)
+		{
+			for (int32 X = 0; X < GridWidth; ++X)
+			{
+				DefaultGrid[Y][X] = 2;
+			}
+		}
+	}
+
+	// on the four corner, we want to have the terrain 2
+	DefaultGrid[0][0] = 1;
+	DefaultGrid[0][14] = 1;
+	DefaultGrid[14][0] = 1;
+	DefaultGrid[14][14] = 1;
+
+	// random place are terrain 4 //lava
+	DefaultGrid[1][2] = 3;
+	DefaultGrid[4][9] = 3;
+	DefaultGrid[7][5] = 3;
+	DefaultGrid[10][3] = 3;
+
+	// on the 4 central points we want terrain 3
+	DefaultGrid[6][6] = 4;
+	DefaultGrid[6][8] = 4;
+	DefaultGrid[8][6] = 4;
+	DefaultGrid[8][8] = 4;
+}
+
+void ATerrain::InitLevel2()
+{
+}
 

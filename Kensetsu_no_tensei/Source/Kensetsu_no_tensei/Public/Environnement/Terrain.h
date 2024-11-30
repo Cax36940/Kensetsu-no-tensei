@@ -41,9 +41,16 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Terrain Management")
 	TArray<TSubclassOf<AActor>> TerrainClass;
 
-
+	UPROPERTY(EditAnywhere, Category = "Terrain Management")
+	int32 LevelNumber;
 
 	void DefaultInitialization();
+
+	void InitGridLevel(int32 Number);
+
+	void InitLevel1();
+
+	void InitLevel2();
 
 
 };
