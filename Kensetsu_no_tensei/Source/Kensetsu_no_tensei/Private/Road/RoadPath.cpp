@@ -80,9 +80,9 @@ void ARoadPath::AddPointToSpline(int32 X, int32 Y, const FVector& Offset)
 {
 	FVector SplinePointLocation = FVector(X * 200, Y * 200, -70) + Offset;
 	SplineComponent->AddSplinePoint(SplinePointLocation, ESplineCoordinateSpace::World);
-	FActorSpawnParameters SpawnParams;
-	AActor* PointMarker = GetWorld()->SpawnActor<AActor>(Marker, SplinePointLocation, FRotator::ZeroRotator, SpawnParams);
-	PointMarker->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
-	Markers.Add(PointMarker);
+	//FActorSpawnParameters SpawnParams;
+	//AActor* PointMarker = GetWorld()->SpawnActor<AActor>(Marker, SplinePointLocation, FRotator::ZeroRotator, SpawnParams);
+	//PointMarker->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+	//Markers.Add(PointMarker);
 }
 
