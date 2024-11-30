@@ -141,11 +141,11 @@ void ATerrain::InitGridLevel(int32 Number)
 	2 - Violet
 	3 - Lava
 	4 - Blue
+	5 - Rock // Obstacles
 */
 
 void ATerrain::InitLevel1()
 {
-	//initialise default grid with random values between 0 and TerrainClass.Num()
 	for (int32 Y = 0; Y < GridHeight; ++Y)
 	{
 		// on the three central lines, we want to have the terrain 1
@@ -158,23 +158,40 @@ void ATerrain::InitLevel1()
 		}
 	}
 
-	// on the four corner, we want to have the terrain 2
+	// on the four corner, we want to have the terrain 1
 	DefaultGrid[0][0] = 1;
 	DefaultGrid[0][14] = 1;
 	DefaultGrid[14][0] = 1;
 	DefaultGrid[14][14] = 1;
 
-	// random place are terrain 4 //lava
+	// random place are terrain 3 //lava
 	DefaultGrid[1][2] = 3;
 	DefaultGrid[4][9] = 3;
 	DefaultGrid[7][5] = 3;
 	DefaultGrid[10][3] = 3;
 
-	// on the 4 central points we want terrain 3
+	// on the 4 central points we want terrain 4
 	DefaultGrid[6][6] = 4;
 	DefaultGrid[6][8] = 4;
 	DefaultGrid[8][6] = 4;
 	DefaultGrid[8][8] = 4;
+
+	// on the four corner neighbours, terrain 5 
+	DefaultGrid[1][0] = 5;
+	DefaultGrid[0][1] = 5;
+	DefaultGrid[1][1] = 5;
+
+	DefaultGrid[0][13] = 5;
+	DefaultGrid[1][14] = 5;
+	DefaultGrid[1][13] = 5;
+
+	DefaultGrid[13][0] = 5;
+	DefaultGrid[14][1] = 5;
+	DefaultGrid[13][1] = 5;
+
+	DefaultGrid[13][14] = 5;
+	DefaultGrid[14][13] = 5;
+	DefaultGrid[13][13] = 5;
 }
 
 void ATerrain::InitLevel2()
