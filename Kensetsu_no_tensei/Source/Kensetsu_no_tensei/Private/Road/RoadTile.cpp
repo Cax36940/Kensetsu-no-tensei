@@ -17,9 +17,6 @@ ARoadTile::ARoadTile()
 	// Create StaticMeshComponent and Attach to BoxComponent
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
 	StaticMesh->SetupAttachment(BoxCollision);
-
-	DynamicMaterialInstance = CreateDefaultSubobject<UMaterialInstanceDynamic>(TEXT("DynamicMaterial"));
-
 }
 
 void ARoadTile::SetColor(const FLinearColor& NewColor)
