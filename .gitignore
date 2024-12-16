@@ -1,6 +1,7 @@
 .vs/*
 Kensetsu_no_tensei/.vsconfig
 Kensetsu_no_tensei/.vs/*
+Kensetsu_no_tensei/Build/*
 Kensetsu_no_tensei/Binaries/*
 Kensetsu_no_tensei/DerivedDataCache/*
 Kensetsu_no_tensei/Intermediate/*
